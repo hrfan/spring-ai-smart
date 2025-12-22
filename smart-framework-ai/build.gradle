@@ -1,0 +1,27 @@
+dependencies {
+    // Spring Boot Starter Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // Spring Boot Starter Data Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    
+    // Spring AI Alibaba Agent Framework
+    implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-agent-framework:1.0.0-M1'
+    
+    // DashScope ChatModel 支持
+    implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-starter-dashscope:1.0.0-M1'
+    
+    // Spring AI Vector Store Redis
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-redis:1.0.0-M1'
+    
+    // Spring AI Alibaba Memory Redis
+    implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-starter-memory-redis:1.0.0-M1'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+

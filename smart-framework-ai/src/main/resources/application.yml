@@ -1,0 +1,51 @@
+spring:
+  # Spring AI DashScope 配置
+  ai:
+    dashscope:
+      base-url: https://dashscope.aliyuncs.com
+      # DashScope API Key ${DASHSCOPE_API_KEY} 环境变量中配置好了，这个必须配置在环境变量中
+      api-key: sk-ff96314ba7694007a3d5b658028a73f1
+      chat:
+        client:
+          connect-timeout: 60s
+          read-timeout: 30s
+        options:
+          model: qwen-plus
+          temperature: 0.7
+      embedding:
+        options:
+          model: text-embedding-v3
+    vectorstore:
+      redis:
+        initialize-schema: true
+        index-name: custom-index
+        prefix: custom-prefix
+
+  # Redis配置
+  data:
+    redis:
+      # Redis服务器地址
+      host: 124.222.120.228
+      # Redis服务器端口
+      port: 6379
+      # Redis密码（如果设置了密码）
+      password: 152564.lmy
+      # 数据库索引
+      database: 0
+      # 连接超时时间
+      timeout: 5000ms
+      # 连接池配置
+      lettuce:
+        pool:
+          # 最大连接数
+          max-active: 8
+          # 最大空闲连接数
+          max-idle: 8
+          # 最小空闲连接数
+          min-idle: 0
+          # 最大等待时间
+          max-wait: -1ms
+
+server:
+  port: 8080
+

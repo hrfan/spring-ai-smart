@@ -1,0 +1,4 @@
+rootProject.name = 'spring-ai-smart'
+
+include 'smart-framework-ai'
+
