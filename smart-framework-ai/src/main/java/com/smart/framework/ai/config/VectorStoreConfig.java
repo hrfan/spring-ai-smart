@@ -1,9 +1,11 @@
 package com.smart.framework.ai.config;
 
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
+import com.alibaba.cloud.ai.dashscope.api.DashScopeImageApi;
 import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingModel;
 import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingOptions;
 import com.alibaba.cloud.ai.dashscope.image.DashScopeImageModel;
+import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.image.ImageModel;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,24 +35,34 @@ public class VectorStoreConfig {
     @Bean
     @ConditionalOnMissingBean
     public EmbeddingModel embeddingModel() {
-        return DashScopeEmbeddingModel.builder()
-                .dashScopeApi(DashScopeApi.builder().apiKey(apiKey).build())
-                .defaultOptions(DashScopeEmbeddingOptions.builder()
-                        .withModel("text-embedding-v3")
-                        .build())
+        DashScopeApi dashScopeApi = DashScopeApi.builder()
+                .apiKey(apiKey)
                 .build();
+        
+        DashScopeEmbeddingOptions options = DashScopeEmbeddingOptions.builder()
+                .withModel("text-embedding-v3")
+                .build();
+        
+        // 使用构造函数创建 DashScopeEmbeddingModel
+        // 构造函数签名: DashScopeEmbeddingModel(DashScopeApi, MetadataMode, DashScopeEmbeddingOptions)
+        return new DashScopeEmbeddingModel(dashScopeApi, MetadataMode.ALL, options);
     }
 
     /**
      * 配置 ImageModel
      * 如果自动配置没有创建，则手动创建
+     * 注意：ImageModel 需要使用 DashScopeImageApi
      */
     @Bean
     @ConditionalOnMissingBean
     public ImageModel imageModel() {
-        return DashScopeImageModel.builder()
-                .dashScopeApi(DashScopeApi.builder().apiKey(apiKey).build())
+        DashScopeImageApi dashScopeImageApi = DashScopeImageApi.builder()
+                .apiKey(apiKey)
                 .build();
+        
+        // 使用构造函数创建 DashScopeImageModel
+        // 构造函数签名: DashScopeImageModel(DashScopeImageApi)
+        return new DashScopeImageModel(dashScopeImageApi);
     }
 }
 
