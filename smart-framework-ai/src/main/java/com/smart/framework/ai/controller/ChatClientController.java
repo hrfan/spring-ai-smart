@@ -24,7 +24,6 @@ import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,13 +69,13 @@ public class ChatClientController {
     @Resource(name = "deepSeekMemoryChatClient")
     private ChatClient deepSeekMemoryChatClient;
 
-    @Resource(required = false)
+    @Resource
     private ImageModel imageModel;
 
-    @Resource(required = false)
+    @Resource
     private EmbeddingModel embeddingModel;
 
-    @Resource(required = false)
+    @Resource
     private VectorStore vectorStore;
 
     /**
@@ -295,9 +294,6 @@ public class ChatClientController {
      */
     @GetMapping("/doChat15")
     public String doChat15(@RequestParam(name = "message") String message) {
-        if (imageModel == null) {
-            return "ImageModel 未配置，请检查 Spring AI DashScope 配置";
-        }
         return imageModel
                 .call(
                         new ImagePrompt(message, DashScopeImageOptions.builder().model("wanx2.1-t2i-turbo").build())
@@ -315,18 +311,13 @@ public class ChatClientController {
     public EmbeddingResponse doChat16(@RequestParam(name = "message") String message) {
         // http://localhost:9102/api/ai/chatClient/doChat16?message=嘉兴小霸王
         // https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-redis-store/1.1.0-RC1
-        if (embeddingModel == null) {
-            throw new IllegalStateException("EmbeddingModel 未配置，请检查 Spring AI DashScope 配置");
-        }
         EmbeddingResponse embeddingResponse = embeddingModel.call(new EmbeddingRequest(
                 List.of(message),
                 DashScopeEmbeddingOptions.builder().withModel("text-embedding-v3").build()
         ));
         log.info("返回结果：{}", embeddingResponse.getResult().getOutput());
 
-        if (vectorStore != null) {
-            vectorStore.add(List.of(new Document(message, Map.of("userId", "123"))));
-        }
+        vectorStore.add(List.of(new Document(message, Map.of("userId", "123"))));
 
         return embeddingResponse;
     }
