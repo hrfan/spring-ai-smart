@@ -70,13 +70,13 @@ public class ChatClientController {
     @Resource(name = "deepSeekMemoryChatClient")
     private ChatClient deepSeekMemoryChatClient;
 
-    @Resource
+    @Resource(required = false)
     private ImageModel imageModel;
 
-    @Resource
+    @Resource(required = false)
     private EmbeddingModel embeddingModel;
 
-    @Resource
+    @Resource(required = false)
     private VectorStore vectorStore;
 
     /**
@@ -210,18 +210,18 @@ public class ChatClientController {
      * PromptTemplate的基础使用
      * 读取prompt_template.txt文件内容
      */
-    @GetMapping("/doChat11")
-    public Flux<String> doChat11(@RequestParam(name = "msg") String msg,
-                                  @RequestParam(name = "output") String output,
-                                  @RequestParam(name = "limit") String limit) throws IOException {
-        // 从外部的配置文件中读取
-        PromptTemplate promptTemplate = new PromptTemplate(userPromptTemplate);
-        Prompt prompt = promptTemplate.create(Map.of("msg", msg, "output", output, "limit", limit));
-        return deepSeekChatClient.prompt(prompt)
-                .stream()
-                .chatResponse()
-                .mapNotNull(it -> it.getResult().getOutput().getText());
-    }
+//    @GetMapping("/doChat11")
+//    public Flux<String> doChat11(@RequestParam(name = "msg") String msg,
+//                                  @RequestParam(name = "output") String output,
+//                                  @RequestParam(name = "limit") String limit) throws IOException {
+//        // 从外部的配置文件中读取
+//        PromptTemplate promptTemplate = new PromptTemplate(userPromptTemplate);
+//        Prompt prompt = promptTemplate.create(Map.of("msg", msg, "output", output, "limit", limit));
+//        return deepSeekChatClient.prompt(prompt)
+//                .stream()
+//                .chatResponse()
+//                .mapNotNull(it -> it.getResult().getOutput().getText());
+//    }
 
     /**
      * 角色限定 和 边界划分
@@ -295,6 +295,9 @@ public class ChatClientController {
      */
     @GetMapping("/doChat15")
     public String doChat15(@RequestParam(name = "message") String message) {
+        if (imageModel == null) {
+            return "ImageModel 未配置，请检查 Spring AI DashScope 配置";
+        }
         return imageModel
                 .call(
                         new ImagePrompt(message, DashScopeImageOptions.builder().model("wanx2.1-t2i-turbo").build())
@@ -312,13 +315,18 @@ public class ChatClientController {
     public EmbeddingResponse doChat16(@RequestParam(name = "message") String message) {
         // http://localhost:9102/api/ai/chatClient/doChat16?message=嘉兴小霸王
         // https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-redis-store/1.1.0-RC1
+        if (embeddingModel == null) {
+            throw new IllegalStateException("EmbeddingModel 未配置，请检查 Spring AI DashScope 配置");
+        }
         EmbeddingResponse embeddingResponse = embeddingModel.call(new EmbeddingRequest(
                 List.of(message),
                 DashScopeEmbeddingOptions.builder().withModel("text-embedding-v3").build()
         ));
         log.info("返回结果：{}", embeddingResponse.getResult().getOutput());
 
-        vectorStore.add(List.of(new Document(message, Map.of("userId", "123"))));
+        if (vectorStore != null) {
+            vectorStore.add(List.of(new Document(message, Map.of("userId", "123"))));
+        }
 
         return embeddingResponse;
     }
