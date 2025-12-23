@@ -17,9 +17,9 @@ dependencies {
     // Spring AI Alibaba Memory Redis
     implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-starter-memory-redis:1.1.0.0-RC1'
     
-    // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    // Lombok - 版本与原始项目保持一致
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
     
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
